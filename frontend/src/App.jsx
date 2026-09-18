@@ -49,6 +49,7 @@ const storeRoutes = [
 const adminRoutes = [
   { index: true, element: <AdminDashboardPage /> },
   { path: "orders", element: <AdminOrdersPage /> },
+  { path: "orders/:id", element: <OrderDetailsPage /> },
   { path: "products", element: <AdminProductsPage /> },
   { path: "products/create", element: <AdminProductCreatePage /> },
   { path: "products/:id/edit", element: <AdminProductEditPage /> },

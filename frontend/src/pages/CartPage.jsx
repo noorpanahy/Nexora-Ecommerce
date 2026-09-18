@@ -65,11 +65,11 @@ function CartPage() {
           </p>
 
           <Link
-            to="/products"
-            className="mt-8 inline-flex rounded-full bg-white px-7 py-4 text-sm font-bold text-black transition hover:scale-105"
+          to="/products"
+          className="mt-8 inline-flex rounded-full bg-white px-7 py-4 text-sm font-bold !text-black transition hover:scale-105"
           >
-            Start Shopping
-          </Link>
+  Start Shopping
+</Link>
 
         </div>
 

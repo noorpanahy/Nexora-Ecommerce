@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import api from "../services/api";
 
 function OrderDetailsPage() {
   const { id } = useParams();
+  const location = useLocation();
+  
+  // Check if we are in the admin panel based on the URL path
+  const isAdmin = location.pathname.startsWith("/admin");
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,10 +21,15 @@ function OrderDetailsPage() {
         setLoading(true);
         setError("");
 
-        const response = await api.get(`/orders/${id}`);
+        // Dynamically choose the correct backend route
+        const endpoint = isAdmin 
+          ? `/admin/orders/${id}` 
+          : `/orders/${id}`;
+
+        const response = await api.get(endpoint);
 
         if (!ignore) {
-          setOrder(response.data.order);
+          setOrder(response.data.order || response.data);
         }
       } catch (error) {
         console.error("Failed to load order:", error);
@@ -45,7 +54,7 @@ function OrderDetailsPage() {
     return () => {
       ignore = true;
     };
-  }, [id]);
+  }, [id, isAdmin]);
 
   if (loading) {
     return (
@@ -68,10 +77,10 @@ function OrderDetailsPage() {
           </p>
 
           <Link
-            to="/products"
+            to={isAdmin ? "/admin/orders" : "/products"}
             className="mt-8 inline-flex rounded-xl bg-indigo-400 px-6 py-3 font-semibold text-zinc-950 transition hover:bg-indigo-300"
           >
-            Continue Shopping
+            {isAdmin ? "Back to Admin Orders" : "Continue Shopping"}
           </Link>
         </div>
       </div>
@@ -85,14 +94,14 @@ function OrderDetailsPage() {
         <div className="rounded-3xl border border-white/10 bg-zinc-900/70 p-8">
 
           <div className="text-center">
-            <div className="text-6xl">✅</div>
+            <div className="text-6xl">📦</div>
 
             <h1 className="mt-6 text-3xl font-black text-white">
-              Order placed successfully
+              {isAdmin ? `Admin View: Order #${order.id}` : "Order placed successfully"}
             </h1>
 
             <p className="mt-2 text-zinc-500">
-              Order #{order.id} — thank you for your purchase.
+              Order status: <span className="text-indigo-400 font-semibold">{order.status || 'Processed'}</span>
             </p>
           </div>
 
@@ -132,7 +141,7 @@ function OrderDetailsPage() {
                   </div>
 
                   <p className="font-semibold text-indigo-400">
-                    ${(Number(item.price) * item.quantity).toFixed(2)}
+                    \${(Number(item.price) * item.quantity).toFixed(2)}
                   </p>
                 </div>
               ))}
@@ -143,27 +152,27 @@ function OrderDetailsPage() {
           <div className="mt-8 border-t border-white/10 pt-6 space-y-2">
             <div className="flex justify-between text-sm text-zinc-400">
               <span>Subtotal</span>
-              <span>${Number(order.subtotal).toFixed(2)}</span>
+              <span>\${Number(order.subtotal || 0).toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between text-sm text-zinc-400">
               <span>Shipping</span>
-              <span>${Number(order.shipping_fee).toFixed(2)}</span>
+              <span>\${Number(order.shipping_fee || 0).toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between border-t border-white/10 pt-3 text-lg font-bold text-white">
               <span>Total</span>
               <span className="text-indigo-400">
-                ${Number(order.total).toFixed(2)}
+                \${Number(order.total || 0).toFixed(2)}
               </span>
             </div>
           </div>
 
           <Link
-            to="/products"
+            to={isAdmin ? "/admin/orders" : "/products"}
             className="mt-8 block rounded-xl bg-indigo-400 px-6 py-4 text-center font-bold text-zinc-950 transition hover:bg-indigo-300"
           >
-            Continue Shopping
+            {isAdmin ? "Back to Admin Orders" : "Continue Shopping"}
           </Link>
 
         </div>

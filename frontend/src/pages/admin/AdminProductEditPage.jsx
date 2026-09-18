@@ -339,7 +339,7 @@ function AdminProductEditPage() {
       });
 
       const response = await api.post(
-        `/products/${id}/images`,
+        `/admin/products/${id}/images`,
         formData,
         {
           headers: {
@@ -400,7 +400,7 @@ function AdminProductEditPage() {
       setError("");
 
       await api.delete(
-        `/product-images/${image.id}`
+        `/admin/product-images/${image.id}`
       );
 
       setImages((current) =>
