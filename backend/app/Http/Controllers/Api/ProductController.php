@@ -15,120 +15,117 @@ class ProductController extends Controller
      * Display products.
      */
     public function index(Request $request)
-    {
-        $query = Product::with([
-            'category',
-            'images',
-        ]);
+{
+    $query = Product::with([
+        'category',
+        'images',
+    ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Search
-        |--------------------------------------------------------------------------
-        */
+    /*
+    |--------------------------------------------------------------------------
+    | Search
+    |--------------------------------------------------------------------------
+    */
 
-        if ($request->filled('search')) {
-            $search = $request->search;
+    if ($request->filled('search')) {
+        $search = $request->search;
 
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('sku', 'like', "%{$search}%");
-            });
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Category Filter
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->filled('category_id')) {
-            $query->where(
-                'category_id',
-                $request->category_id
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Price Filter
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->filled('min_price')) {
-            $query->where(
-                'price',
-                '>=',
-                $request->min_price
-            );
-        }
-
-        if ($request->filled('max_price')) {
-            $query->where(
-                'price',
-                '<=',
-                $request->max_price
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Status
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->has('status')) {
-            $query->where(
-                'status',
-                $request->boolean('status')
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Sorting
-        |--------------------------------------------------------------------------
-        */
-
-        $sort = $request->get('sort', 'latest');
-
-        switch ($sort) {
-
-            case 'price_low':
-                $query->orderBy('price', 'asc');
-                break;
-
-            case 'price_high':
-                $query->orderBy('price', 'desc');
-                break;
-
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-
-            default:
-                $query->latest();
-                break;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pagination
-        |--------------------------------------------------------------------------
-        */
-
-        $perPage = min(
-            (int) $request->get('per_page', 12),
-            100
-        );
-
-        $products = $query->paginate($perPage);
-
-        return response()->json($products);
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('sku', 'like', "%{$search}%");
+        });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Category Filter
+    |--------------------------------------------------------------------------
+    */
 
+    if ($request->filled('category_id')) {
+        $query->where(
+            'category_id',
+            $request->category_id
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Price Filter
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('min_price')) {
+        $query->where(
+            'price',
+            '>=',
+            $request->min_price
+        );
+    }
+
+    if ($request->filled('max_price')) {
+        $query->where(
+            'price',
+            '<=',
+            $request->max_price
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Status
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->has('status')) {
+        $query->where(
+            'status',
+            $request->boolean('status')
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sorting
+    |--------------------------------------------------------------------------
+    */
+
+    $sort = $request->get('sort', 'latest');
+
+    switch ($sort) {
+        case 'price_low':
+            $query->orderBy('price', 'asc');
+            break;
+
+        case 'price_high':
+            $query->orderBy('price', 'desc');
+            break;
+
+        case 'name':
+            $query->orderBy('name', 'asc');
+            break;
+
+        default:
+            $query->orderBy('id', 'desc');
+            break;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pagination
+    |--------------------------------------------------------------------------
+    */
+
+    $perPage = min(
+        max((int) $request->get('per_page', 12), 1),
+        100
+    );
+
+    $products = $query->paginate($perPage);
+
+    return response()->json($products);
+}
     /**
      * Store product.
      */

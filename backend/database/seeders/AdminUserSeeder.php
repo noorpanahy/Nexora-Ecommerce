@@ -10,11 +10,14 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@ecommerce.test',
-            'password' => Hash::make('admin12345'),
-            'role' => 'ADMIN',
-        ]);
+        // This checks if the email exists first, preventing the duplicate error
+        User::firstOrCreate(
+            ['email' => 'admin@ecommerce.test'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin12345'),
+                'role' => 'ADMIN',
+            ]
+        );
     }
 }

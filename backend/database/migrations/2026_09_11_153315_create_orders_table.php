@@ -15,11 +15,11 @@ return new class extends Migration
         $table->id();
 
         $table->foreignId('user_id')
-            ->constrained()
+            ->constrained('users')
             ->cascadeOnDelete();
 
         $table->foreignId('address_id')
-            ->constrained()
+            ->constrained('addresses')
             ->cascadeOnDelete();
 
         $table->string('status')->default('PENDING');
