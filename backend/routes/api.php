@@ -137,10 +137,10 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::put('/categories/{category}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
-
+        Route::get('/admin/categories/{category}', [CategoryController::class, 'show']);
+        Route::put('/admin/categories/{category}', [CategoryController::class, 'update']);
+        Route::post('/admin/categories', [CategoryController::class, 'store']);
+        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy']);
 
     /*
     |--------------------------------------------------------------------------
